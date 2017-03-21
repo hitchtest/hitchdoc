@@ -1,0 +1,5 @@
+{% for recording in recordings %}
+{{ recording.name }}
+{% for step in recording.steps %}
+* {{ step.name }}{% endfor %}
+{% endfor %}

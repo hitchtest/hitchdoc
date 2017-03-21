@@ -1,0 +1,4 @@
+Simple story
+
+* Did thing
+* Did other thing
