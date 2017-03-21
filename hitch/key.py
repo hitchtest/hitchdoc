@@ -55,7 +55,7 @@ class Engine(BaseEngine):
             if not filepath.dirname().exists():
                 filepath.dirname().mkdir()
             filepath.write_text(str(text))
-        
+
         self.path.engine.joinpath("code_that_does_things.py").copy(self.path.state)
 
         self.python_package = hitchpython.PythonPackage(
@@ -69,7 +69,7 @@ class Engine(BaseEngine):
         with hitchtest.monitor([self.path.keypath.joinpath("debugrequirements.txt")]) as changed:
             if changed:
                 self.pip("install", "-r", "debugrequirements.txt").in_dir(self.path.keypath).run()
-        
+
         self.pip("uninstall", "hitchdoc", "-y").ignore_errors().run()
         self.pip("install", ".").in_dir(self.path.project).run()
 
