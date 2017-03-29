@@ -1,4 +1,7 @@
 from hitchdoc.database import Database
+from hitchdoc import exceptions
+import pickle
+import base64
 
 
 class Recorder(object):
@@ -13,5 +16,19 @@ class Recorder(object):
         self._model.save(force_insert=True)
 
     def step(self, name, **kwargs):
-        new_step = self._db.Step(recording=self._model, name=name)
+        for key, value in kwargs.items():
+            assert type(key) is str
+
+            try:
+                pickle.dumps(value)
+            except TypeError:
+                raise exceptions.VarMustBePickleable(
+                    "Can't use non-pickleable objects as vars."
+                )
+
+        new_step = self._db.Step(
+            recording=self._model,
+            name=name,
+            kwargs=base64.b64encode(pickle.dumps(kwargs))
+        )
         new_step.save()

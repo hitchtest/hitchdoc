@@ -1,11 +1,11 @@
-Base story:
+HitchDoc:
   params:
     python version: 3.5.0
   preconditions:
     python version: (( python version ))
 
-Quickstart:
-  based on: Base story
+HitchDoc Quickstart:
+  based on: HitchDoc
   preconditions:
     files:
       simple.story: |
@@ -25,11 +25,26 @@ Quickstart:
                 )
 
             def do_thing(self):
-                self.doc.step("Did thing")
+                self.doc.step("thing", var=1)
 
             def do_other_thing(self):
-                self.doc.step("Did other thing")
+                self.doc.step("other-thing", val=2)
+      templates.yml: |
+        documents:
+          readme: |
+            Example title
+            =============
 
+            {% for story in stories %}
+            {{ story.name }}
+            ----------------
+            {% for step in story.steps %}
+            * {{ step }}
+            {% endfor %}
+            {% endfor %}
+        steps:
+          thing: Did thing {{ var }}
+          other-thing: Did other thing {{ val }}
   scenario:
     - Run: |
        from pathquery import pathq
@@ -38,12 +53,16 @@ Quickstart:
        from path import Path
        import hitchdoc
 
-       # Get recording
-       print(StoryCollection(pathq(".").ext("story"), Engine()).one().play().report())
+    - Run: |
+       # Make recording of story output
+       stories = StoryCollection(pathq(".").ext("story"), Engine())
+       print(stories.one().play().report())
 
-       # Create documentation
-       assert Path("storydb.sqlite").exists()
-       documentation = hitchdoc.Documentation('storydb.sqlite')
-       output(documentation.generate())
-    - Output will be:
-       reference: simple-story-generated-doc
+    - Run: |
+       # Create documentation   
+       documentation = hitchdoc.Documentation('storydb.sqlite', 'templates.yml')
+       documentation.write("readme", "README.rst")
+
+    - File contents will be:
+       filename: README.rst
+       reference: simple-generated-readme

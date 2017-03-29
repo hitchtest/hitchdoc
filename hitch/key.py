@@ -102,10 +102,8 @@ class Engine(BaseEngine):
 
     def assert_exception(self, command, exception):
         self.ipython_step_library.assert_exception(command, exception)
-
-    def output_will_be(self, reference, changeable=None):
-        output_contents = self.path.state.joinpath("output.txt").bytes().decode('utf8').strip()
-
+    
+    def _will_be(self, content, reference, changeable=None):
         artefact = self.path.engine.joinpath(
             "artefacts", "{0}.txt".format(reference.replace(" ", "-").lower())
         )
@@ -115,7 +113,7 @@ class Engine(BaseEngine):
             close_delimeter=")))",
         )
 
-        simex_contents = output_contents
+        simex_contents = content
 
         if changeable is not None:
             for replacement in changeable:
@@ -126,15 +124,25 @@ class Engine(BaseEngine):
         else:
             if self.settings.get('overwrite artefacts'):
                 artefact.write_text(simex_contents)
-                self.services.log(output_contents)
+                self.services.log(content)
             else:
-                if simex.compile(artefact.bytes().decode('utf8')).match(output_contents) is None:
+                if simex.compile(artefact.bytes().decode('utf8')).match(content) is None:
                     raise RuntimeError("Expected to find:\n{0}\n\nActual output:\n{1}".format(
                         artefact.bytes().decode('utf8'),
-                        output_contents,
+                        content,
                     ))
                 else:
-                    self.services.log(output_contents)
+                    self.services.log(content)
+
+    def file_contents_will_be(self, filename, reference, changeable=None):
+        output_contents = self.path.state.joinpath(filename).bytes().decode('utf8')
+        self._will_be(output_contents, reference, changeable)
+
+
+    def output_will_be(self, reference, changeable=None):
+        output_contents = self.path.state.joinpath("output.txt").bytes().decode('utf8')
+        self._will_be(output_contents, reference, changeable)
+
 
     def shell(self):
         if hasattr(self, 'services'):
@@ -163,6 +171,9 @@ class Engine(BaseEngine):
                     "--existing", self.ipython_kernel_filename
                 ])
             self.services.stop_interactive_mode()
+
+    def on_failure(self):
+        self.shell()
 
     def tear_down(self):
         """Clean out the state directory."""
