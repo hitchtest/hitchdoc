@@ -9,7 +9,7 @@ class Story(object):
     @property
     def name(self):
         return self._name
-    
+
     @property
     def slug(self):
         return slugify(self._name)

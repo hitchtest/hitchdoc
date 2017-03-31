@@ -102,7 +102,7 @@ class Engine(BaseEngine):
 
     def assert_exception(self, command, exception):
         self.ipython_step_library.assert_exception(command, exception)
-    
+
     def _will_be(self, content, reference, changeable=None):
         artefact = self.path.engine.joinpath(
             "artefacts", "{0}.txt".format(reference.replace(" ", "-").lower())
@@ -138,11 +138,9 @@ class Engine(BaseEngine):
         output_contents = self.path.state.joinpath(filename).bytes().decode('utf8')
         self._will_be(output_contents, reference, changeable)
 
-
     def output_will_be(self, reference, changeable=None):
         output_contents = self.path.state.joinpath("output.txt").bytes().decode('utf8')
         self._will_be(output_contents, reference, changeable)
-
 
     def shell(self):
         if hasattr(self, 'services'):

@@ -20,6 +20,23 @@ class Step(object):
         return env.get_template(self.name).render(**self.kwargs)
 
 
+class Story(object):
+    def __init__(self, recording, db, step_templates):
+        self.name = recording.name
+        self.slug = recording.slug
+        self._properties = pickle.loads(base64.b64decode(recording.properties))
+        self._templates = step_templates
+        self.steps = [
+            Step(
+                step_db,
+                step_templates
+            ) for step_db in db.Step.filter(recording=recording)
+        ]
+
+    def __getitem__(self, key):
+        return self._properties[key]
+
+
 class Documentation(object):
     def __init__(self, sqlite_filename, templates):
         self._db = Database(sqlite_filename)
@@ -32,16 +49,8 @@ class Documentation(object):
         ).data
 
         self._stories = [
-            {
-                "name": recording.name,
-                "slug": recording.slug,
-                "steps": [
-                    Step(
-                        step_db,
-                        self._templates['steps']
-                    ) for step_db in self._db.Step.filter(recording=recording)
-                ],
-            } for recording in self._db.Recording.select()
+            Story(recording, self._db, self._templates['steps'])
+                for recording in self._db.Recording.select()
         ]
 
     def write(self, template_name, filename):

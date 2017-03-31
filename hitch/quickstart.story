@@ -10,14 +10,24 @@ HitchDoc Quickstart:
     files:
       simple.story: |
         Simple story:
+          description: |
+            This description should explain
+            why this story exists.
           scenario:
             - do thing
             - do other thing
       engine.py: |
-        from hitchstory import BaseEngine
+        from hitchstory import BaseEngine, StorySchema
+        from strictyaml import Str
         import hitchdoc
 
         class Engine(BaseEngine):
+            schema = StorySchema(
+                about={
+                    "description": Str(),
+                }
+            )
+
             def set_up(self):
                 self.doc = hitchdoc.Recorder(
                     hitchdoc.HitchStory(self),
@@ -34,13 +44,14 @@ HitchDoc Quickstart:
           readme: |
             Example title
             =============
-
             {% for story in stories %}
             {{ story.name }}
-            ----------------
-            {% for step in story.steps %}
+            {{ "-" * story.name|length }}
+
+            {{ story['description'] }}
+            {%- for step in story.steps %}
             * {{ step }}
-            {% endfor %}
+            {%- endfor %}
             {% endfor %}
         steps:
           thing: Did thing {{ var }}
@@ -59,7 +70,7 @@ HitchDoc Quickstart:
        print(stories.one().play().report())
 
     - Run: |
-       # Create documentation   
+       # Create documentation
        documentation = hitchdoc.Documentation('storydb.sqlite', 'templates.yml')
        documentation.write("readme", "README.rst")
 
