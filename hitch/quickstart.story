@@ -70,6 +70,10 @@ HitchDoc Quickstart:
        print(stories.one().play().report())
 
     - Run: |
+       # Make re-recording of story output, overwriting existing recording
+       print(stories.one().play().report())
+
+    - Run: |
        # Create documentation
        documentation = hitchdoc.Documentation('storydb.sqlite', 'templates.yml')
        documentation.write("readme", "README.rst")

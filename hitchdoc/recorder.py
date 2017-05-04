@@ -9,6 +9,11 @@ class Recorder(object):
         self._story = story
         self._db = Database(sqlite_filename)
 
+        if self._db.Recording.filter(name=story.name).first() is not None:
+            self._db.Recording.filter(name=story.name).first().delete_instance(
+                recursive=True
+            )
+
         self._model = self._db.Recording(
             name=story.name,
             slug=story.slug,
