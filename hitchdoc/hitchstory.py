@@ -18,11 +18,16 @@ class Story(object):
     def properties(self):
         return self._properties
 
+    @property
+    def filename(self):
+        return self._filename
+
 
 class HitchStory(Story):
     def __init__(self, engine):
         from hitchstory import BaseEngine
         assert isinstance(engine, BaseEngine)
         self._name = engine.story.name
+        self._filename = engine.story.filename
         self._properties = engine.story.about
         self._properties['preconditions'] = engine.story.preconditions

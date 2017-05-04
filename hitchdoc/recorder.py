@@ -16,6 +16,7 @@ class Recorder(object):
 
         self._model = self._db.Recording(
             name=story.name,
+            filename=story.filename,
             slug=story.slug,
             properties=base64.b64encode(pickle.dumps(story.properties))
         )

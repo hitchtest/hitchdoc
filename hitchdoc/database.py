@@ -11,6 +11,7 @@ class Database(object):
         class Recording(BaseModel):
             slug = CharField(primary_key=True)
             name = CharField()
+            filename = CharField()
             properties = TextField()
 
         class Step(BaseModel):

@@ -5,6 +5,7 @@ from strictyaml import load, MapPattern, Map, Str
 from path import Path
 import pickle
 import base64
+import os
 
 
 class Step(object):
@@ -24,6 +25,8 @@ class Story(object):
     def __init__(self, recording, db, templates):
         self.name = recording.name
         self.slug = recording.slug
+        self.full_filename = recording.filename
+        self.filename = os.path.basename(recording.filename)
         self._properties = pickle.loads(base64.b64decode(recording.properties))
         self._templates = templates
         self.steps = [

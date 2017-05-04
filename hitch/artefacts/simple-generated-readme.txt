@@ -1,7 +1,7 @@
 Example title
 =============
 
-Simple story
+Simple story (simple.story)
 ------------
 
 This description should explain

@@ -45,7 +45,7 @@ HitchDoc Quickstart:
             Example title
             =============
             {% for story in stories %}
-            {{ story.name }}
+            {{ story.name }} ({{ story.filename }})
             {{ "-" * story.name|length }}
 
             {{ story['description'] }}
