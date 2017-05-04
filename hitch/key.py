@@ -231,6 +231,7 @@ def lint():
     ).run()
     print("Lint success!")
 
+
 def deploy(version):
     """
     Deploy to pypi as specified version.
