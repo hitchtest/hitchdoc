@@ -1,0 +1,7 @@
+Second simple story
+-------------------
+
+This description should explain
+why this second story exists.
+
+* Did thing 1

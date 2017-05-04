@@ -21,17 +21,24 @@ class Step(object):
 
 
 class Story(object):
-    def __init__(self, recording, db, step_templates):
+    def __init__(self, recording, db, templates):
         self.name = recording.name
         self.slug = recording.slug
         self._properties = pickle.loads(base64.b64decode(recording.properties))
-        self._templates = step_templates
+        self._templates = templates
         self.steps = [
             Step(
                 step_db,
-                step_templates
+                self._templates['steps'],
             ) for step_db in db.Step.filter(recording=recording)
         ]
+
+    def write(self, template_name, filename):
+        env = Environment()
+        env.loader = DictLoader(self._templates['documents'])
+        Path(filename).write_text(env.get_template(template_name).render(
+            story=self,
+        ))
 
     def __getitem__(self, key):
         return self._properties[key]
@@ -49,9 +56,13 @@ class Documentation(object):
         ).data
 
         self._stories = [
-            Story(recording, self._db, self._templates['steps'])
+            Story(recording, self._db, self._templates)
                 for recording in self._db.Recording.select()
         ]
+
+    @property
+    def stories(self):
+        return self._stories
 
     def write(self, template_name, filename):
         env = Environment()
