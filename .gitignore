@@ -1,3 +1,5 @@
 state
 hitch/hitchdir
+dist/
+hitchdoc.egg-info/
 __pycache__
