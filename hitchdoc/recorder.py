@@ -22,7 +22,7 @@ class Recorder(object):
         )
         self._model.save(force_insert=True)
 
-    def step(self, name, **kwargs):
+    def step(self, step_name, **kwargs):
         for key, value in kwargs.items():
             assert type(key) is str
 
@@ -35,7 +35,7 @@ class Recorder(object):
 
         new_step = self._db.Step(
             recording=self._model,
-            name=name,
+            step_name=step_name,
             kwargs=base64.b64encode(pickle.dumps(kwargs))
         )
         new_step.save()
